@@ -179,6 +179,7 @@ yawPID.output = 0;
 target.position = stateVar.x;
 target.speed = 0.0f;
 ```
+image文件夹含有双腿起立，和跳跃视频
 
 ### 4.1html蓝牙/键鼠控制
 
