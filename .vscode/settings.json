@@ -1,0 +1,6 @@
+{
+    "files.associations": {
+        "serial.h": "c"
+    },
+    "python-envs.defaultEnvManager": "ms-python.python:system"
+}
