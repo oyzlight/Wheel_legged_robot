@@ -151,7 +151,8 @@ float kRatio[2][6] = {
 		{1.0f,1.0f,	1.2f,1.2f,1.0f,1.0f}	//lqrOutTp		髋关节
 		};			
 ```
-
+保持小范围内移动即可
+[https://github.com/oyzlight/Wheel_legged_robot/issues/1#issuecomment-4350559435](https://github.com/user-attachments/assets/b8e1a997-dfb4-42a7-b6f0-01b51ff9c36e)
 ### 2.3保护措施
 
 ```c
@@ -184,6 +185,7 @@ bool check_Fallground(){
 ### 3.2双腿起立
 
 同单腿，一起给值就好
+https://github.com/user-attachments/assets/facdec61-1ea6-4ca2-bf08-76cfcfcfa08b
 
 ### 3.3跳跃
 
@@ -199,7 +201,8 @@ yawPID.output = 0;
 target.position = stateVar.x;
 target.speed = 0.0f;
 ```
-<video src="./image/jump.mp4" controls width="600"></video>
+效果一般，力不太够
+[<video src="./image/jump.mp4" controls width="600"></video>](https://github.com/user-attachments/assets/facdec61-1ea6-4ca2-bf08-76cfcfcfa08b)
 ### 4.1html蓝牙/键鼠控制
 
 ![](a1.png)
