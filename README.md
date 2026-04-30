@@ -234,27 +234,35 @@ VMC指的是virtual model control,是一种虚拟模型控制，用来把“想�
 
 已知髋关节A,E两个电机角度以及大小腿长度，可以推算出五连杆机构末端C的位置,取A,E中点位置即可计算出虚拟的L0，theta0.(具体计算过程看玺佬推导)
 
-设X=[L0,theta0]^T, q=[theta1,theta4]^T,根据x=f(q)，并进行全微分可得出雅可比矩阵J等于
+设X=[L0,theta0]^T, q=[theta1,theta4]^T,根据x=f(q)，并进行全微分可得出雅可比矩阵J
 $$
-(\begin{bmatrix} \delta L_0 \\ \delta \phi_0 \end{bmatrix} = \begin{bmatrix} \dfrac{\partial f_1}{\partial \phi_1} & \dfrac{\partial f_1}{\partial \phi_4} \\ \dfrac{\partial f_2}{\partial \phi_1} & \dfrac{\partial f_2}{\partial \phi_4} \end{bmatrix} \begin{bmatrix} \delta \phi_1 \\ \delta \phi_4 \end{bmatrix})(\delta \boldsymbol{x} = \boldsymbol{J} \delta \boldsymbol{q})
-\\
-根据虚功原理即系统总虚功为0，关节力矩做的虚功＋末端力做的虚功=0，
-\\
-\boldsymbol{T}^\mathrm{T} \delta \boldsymbol{q} + (-\boldsymbol{F})^\mathrm{T} \delta \boldsymbol{x} = 0
-
-\\
-将 \delta \boldsymbol{x} = \boldsymbol{J} \delta \boldsymbol{q}
-代入上式： 
-\\
-\boldsymbol{T}^\mathrm{T} \delta \boldsymbol{q} - \boldsymbol{F}^\mathrm{T} \boldsymbol{J} \delta \boldsymbol{q} = 0\\  
-\left( \boldsymbol{T}^\mathrm{T} - \boldsymbol{F}^\mathrm{T} \boldsymbol{J} \right) \delta \boldsymbol{q} = 0  
-\由于 delta \boldsymbol{q} 为任意虚位移\因此：  boldsymbol{T}^\mathrm{T} = \boldsymbol{F}^\mathrm{T} \boldsymbol{J}  两边转置得： \boldsymbol{T} = \boldsymbol{J}^\mathrm{T} \boldsymbol{F}
+设末端位姿向量 \(\boldsymbol{x} = \begin{bmatrix} L_0 \\ \phi_0 \end{bmatrix}\)，关节角度向量 \(\boldsymbol{q} = \begin{bmatrix} \phi_1 \\ \phi_4 \end{bmatrix}\)。由五连杆正运动学关系：
+\(\boldsymbol{x} = \boldsymbol{f}(\boldsymbol{q})\)对运动学方程做全微分展开，可得：
+\(\begin{bmatrix}
+\delta L_0 \\
+\delta \phi_0
+\end{bmatrix}
+=
+\begin{bmatrix}
+\dfrac{\partial f_1}{\partial \phi_1} & \dfrac{\partial f_1}{\partial \phi_4} \\[6pt]
+\dfrac{\partial f_2}{\partial \phi_1} & \dfrac{\partial f_2}{\partial \phi_4}
+\end{bmatrix}
+\begin{bmatrix}
+\delta \phi_1 \\
+\delta \phi_4
+\end{bmatrix}\)简写为：
+\(\delta \boldsymbol{x} = \boldsymbol{J} \delta \boldsymbol{q}\)其中 \(\boldsymbol{J}\) 为机构雅可比矩阵。
+根据虚功原理，系统虚功平衡，关节力矩虚功与末端作用力虚功之和为零：
+\(\boldsymbol{T}^\mathrm{T} \delta \boldsymbol{q} - \boldsymbol{F}^\mathrm{T} \delta \boldsymbol{x} = 0\)将 \(\delta \boldsymbol{x} = \boldsymbol{J} \delta \boldsymbol{q}\) 代入上式：
+\(\boldsymbol{T}^\mathrm{T} \delta \boldsymbol{q} - \boldsymbol{F}^\mathrm{T} \boldsymbol{J} \delta \boldsymbol{q} = 0\)整理可得：
+\(\left( \boldsymbol{T}^\mathrm{T} - \boldsymbol{F}^\mathrm{T} \boldsymbol{J} \right) \delta \boldsymbol{q} = 0\)由于 \(\delta \boldsymbol{q}\) 为任意虚位移，因此：\(\boldsymbol{T}^\mathrm{T} = \boldsymbol{F}^\mathrm{T} \boldsymbol{J}\)，两边转置得：\(\boldsymbol{T} = \boldsymbol{J}^\mathrm{T} \boldsymbol{F}\)
+\\由于 \delta \boldsymbol{q} 为任意虚位移\\因此：  \boldsymbol{T}^\mathrm{T} = \boldsymbol{F}^\mathrm{T} \boldsymbol{J}  两边转置得： \boldsymbol{T} = \boldsymbol{J}^\mathrm{T} \boldsymbol{F}
 $$
 
 
 但是计算量过大，便用以下方法
 
-**雅可比矩阵 实际描述的是两坐标微分的线性映射关系，因此我们可以通过计算速度映射关系来得到雅可比矩阵**。
+**雅可比矩阵 实际描述的是两坐标微分的线性映射关系，因此我们可以通过计算速度映射关系来得到雅可比矩阵**减少计算量。
 
 对xb，xd关系式求导，求出theta2的导数，再将其代入xc，yc导数的关系式中化简即可得到所需的关系式
 
