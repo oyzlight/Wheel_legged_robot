@@ -249,7 +249,7 @@ $$
 \\
 \boldsymbol{T}^\mathrm{T} \delta \boldsymbol{q} - \boldsymbol{F}^\mathrm{T} \boldsymbol{J} \delta \boldsymbol{q} = 0\\  
 \left( \boldsymbol{T}^\mathrm{T} - \boldsymbol{F}^\mathrm{T} \boldsymbol{J} \right) \delta \boldsymbol{q} = 0  
-\\由于 \delta \boldsymbol{q} 为任意虚位移\\因此：  \boldsymbol{T}^\mathrm{T} = \boldsymbol{F}^\mathrm{T} \boldsymbol{J}  两边转置得： \boldsymbol{T} = \boldsymbol{J}^\mathrm{T} \boldsymbol{F}
+\\由于 delta \boldsymbol{q} 为任意虚位移\\因此：  boldsymbol{T}^\mathrm{T} = \boldsymbol{F}^\mathrm{T} \boldsymbol{J}  两边转置得： \boldsymbol{T} = \boldsymbol{J}^\mathrm{T} \boldsymbol{F}
 $$
 
 
