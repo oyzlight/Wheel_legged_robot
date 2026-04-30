@@ -152,9 +152,9 @@ float kRatio[2][6] = {
 		};			
 ```
 保持小范围内移动即可
-<video controls width="100%">
-  <source src="https://github.com/oyzlight/Wheel_legged_robot/issues/1#issuecomment-4350559435" type="video/mp4">
-</video>
+
+[![演示视频](https://github.com/user-attachments/assets/b8e1a997-dfb4-42a7-b6f0-01b51ff9c36e)](https://github.com/user-attachments/assets/b8e1a997-dfb4-42a7-b6f0-01b51ff9c36e)
+
 ### 2.3保护措施
 
 ```c
@@ -188,7 +188,7 @@ bool check_Fallground(){
 
 同单腿，一起给值就好
 https://github.com/user-attachments/assets/facdec61-1ea6-4ca2-bf08-76cfcfcfa08b
-
+[![演示视频](https://github.com/user-attachments/assets/928c907b-2759-4c30-b4f5-79027ee33e45)](https://github.com/user-attachments/assets/928c907b-2759-4c30-b4f5-79027ee33e45)
 ### 3.3跳跃
 
 参考达妙状态机，分为3个状态，下压，弹起，收缩转常态
@@ -204,7 +204,7 @@ target.position = stateVar.x;
 target.speed = 0.0f;
 ```
 效果一般，力不太够
-[<video src="./image/jump.mp4" controls width="600"></video>](https://github.com/user-attachments/assets/facdec61-1ea6-4ca2-bf08-76cfcfcfa08b)
+[![]https://github.com/user-attachments/assets/429bd7b9-4312-4c28-aed4-620284ee8f30](https://github.com/user-attachments/assets/429bd7b9-4312-4c28-aed4-620284ee8f30)
 ### 4.1html蓝牙/键鼠控制
 
 ![](a1.png)
