@@ -152,9 +152,9 @@ float kRatio[2][6] = {
 		};			
 ```
 保持小范围内移动即可
-[[[https://github.com/oyzlight/Wheel_legged_robot/issues/1#issuecomment-4350559435](https://github.com/user-attachments/assets/b8e1a997-dfb4-42a7-b6f0-01b51ff9c36e)](https://github.com/oyzlight/Wheel_legged_robot/issues/1#issuecomment-4350559435)](https://github.com/user-attachments/assets/b8e1a997-dfb4-42a7-b6f0-01b51ff9c36e
-
-)
+<video controls width="100%">
+  <source src="https://github.com/oyzlight/Wheel_legged_robot/issues/1#issuecomment-4350559435" type="video/mp4">
+</video>
 ### 2.3保护措施
 
 ```c
