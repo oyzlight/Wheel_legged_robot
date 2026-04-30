@@ -121,7 +121,7 @@
 
 ![image-20260427215930728](image-20260427215930728.png)
 
-​	给esp32主板放平后使用typec供电，点击Monitor监视，按复位按键会打印出偏移数据，填进去即可
+	给esp32主板放平后使用typec供电，点击Monitor监视，按复位按键会打印出偏移数据，填进去即可
 
 ### 1.3机器人安装事项
 
@@ -153,6 +153,7 @@ float kRatio[2][6] = {
 		{1.0f,1.0f,	1.2f,1.2f,1.0f,1.0f}	//lqrOutTp		髋关节
 		};			
 ```
+
 保持小范围内移动即可
 
 [![演示视频](https://github.com/user-attachments/assets/b8e1a997-dfb4-42a7-b6f0-01b51ff9c36e)](https://github.com/user-attachments/assets/b8e1a997-dfb4-42a7-b6f0-01b51ff9c36e)
@@ -191,6 +192,7 @@ bool check_Fallground(){
 同单腿，一起给值就好
 
 [![演示视频](https://github.com/user-attachments/assets/928c907b-2759-4c30-b4f5-79027ee33e45)](https://github.com/user-attachments/assets/928c907b-2759-4c30-b4f5-79027ee33e45)
+
 ### 3.3跳跃
 
 
@@ -206,10 +208,57 @@ yawPID.output = 0;
 target.position = stateVar.x;
 target.speed = 0.0f;
 ```
+
 效果一般，力不太够
 [![演示视频](https://github.com/user-attachments/assets/429bd7b9-4312-4c28-aed4-620284ee8f30)](https://github.com/user-attachments/assets/429bd7b9-4312-4c28-aed4-620284ee8f30)
+
 ### 4.1html蓝牙/键鼠控制
 
 ![](a1.png)
 
 也可以使用其他遥控器控制，这里方便看状态
+
+## 系统知识总结
+
+### 1.VMC[(16 条消息) 五连杆运动学解算与VMC - 知乎](https://zhuanlan.zhihu.com/p/613007726)
+
+#### 1.1什么是VMC
+
+VMC指的是virtual model control,是一种虚拟模型控制，用来把“想要的运动”
+
+转成每个关节该输出的力矩。
+
+**不直接控制单个关节角度，而是虚拟构建弹簧阻尼组成整体模型，根据姿态高度速度，计算出维持稳定所需要的目标合力，通过雅可比矩阵映射，把整体力分配各给腿部关节，驱动轮执行。**
+
+#### 1.2.五连杆运动学解算
+
+已知髋关节A,E两个电机角度以及大小腿长度，可以推算出五连杆机构末端C的位置,取A,E中点位置即可计算出虚拟的L0，theta0.(具体计算过程看玺佬推导)
+
+设X=[L0,theta0]^T, q=[theta1,theta4]^T,根据x=f(q)，并进行全微分可得出雅可比矩阵J等于
+$$
+(\begin{bmatrix} \delta L_0 \\ \delta \phi_0 \end{bmatrix} = \begin{bmatrix} \dfrac{\partial f_1}{\partial \phi_1} & \dfrac{\partial f_1}{\partial \phi_4} \\ \dfrac{\partial f_2}{\partial \phi_1} & \dfrac{\partial f_2}{\partial \phi_4} \end{bmatrix} \begin{bmatrix} \delta \phi_1 \\ \delta \phi_4 \end{bmatrix})(\delta \boldsymbol{x} = \boldsymbol{J} \delta \boldsymbol{q})
+$$
+根据虚功原理即系统总虚功为0，关节力矩做的虚功＋末端力做的虚功=0，
+$$
+\boldsymbol{T}^\mathrm{T} \delta \boldsymbol{q} + (-\boldsymbol{F})^\mathrm{T} \delta \boldsymbol{x} = 0
+$$
+
+$$
+将 \delta \boldsymbol{x} = \boldsymbol{J} \delta \boldsymbol{q}$
+代入上式： \\
+\boldsymbol{T}^\mathrm{T} \delta \boldsymbol{q} - \boldsymbol{F}^\mathrm{T} \boldsymbol{J} \delta \boldsymbol{q} = 0\\  
+\left( \boldsymbol{T}^\mathrm{T} - \boldsymbol{F}^\mathrm{T} \boldsymbol{J} \right) \delta \boldsymbol{q} = 0  
+\\由于 \delta \boldsymbol{q} 为任意虚位移\\因此：  \boldsymbol{T}^\mathrm{T} = \boldsymbol{F}^\mathrm{T} \boldsymbol{J}  两边转置得： \boldsymbol{T} = \boldsymbol{J}^\mathrm{T} \boldsymbol{F}
+$$
+
+
+但是计算量过大，便用以下方法
+
+**雅可比矩阵 实际描述的是两坐标微分的线性映射关系，因此我们可以通过计算速度映射关系来得到雅可比矩阵**。
+
+对xb，xd关系式求导，求出theta2的导数，再将其代入xc，yc导数的关系式中化简即可得到所需的关系式
+
+
+
+
+
