@@ -1,5 +1,27 @@
 # 轮足平衡机器人控制系统 (Wheel-Legged Robot)
 
+## 📑 目录
+
+- [轮足平衡机器人控制系统 (Wheel-Legged Robot)](#轮足平衡机器人控制系统-wheel-legged-robot)
+  - [✨ 技术亮点](#-技术亮点)
+  - [🛠️ 硬件架构](#️-硬件架构)
+  - [📂 核心代码模块说明](#-核心代码模块说明)
+  - [🎮 蓝牙控制协议](#-蓝牙控制协议)
+  - [🔧 开发环境与依赖](#-开发环境与依赖)
+  - [完整调试流程](#完整调试流程)
+    - [1.1调试准备](#11调试准备)
+    - [1.2 IMU校准](#12-imu校准)
+    - [1.3机器人安装事项](#13机器人安装事项)
+    - [2.1调试髋部](#21调试髋部)
+    - [2.2调试轮部](#22调试轮部)
+    - [2.3保护措施](#23保护措施)
+    - [3.1单腿起立](#31单腿起立)
+    - [3.2双腿起立](#32双腿起立)
+    - [3,3跳跃](#33跳跃)
+    - [4.1html蓝牙/键鼠控制](#41html蓝牙键鼠控制)
+
+---
+
 本项目是基于 ESP32 开发的轮足平衡（轮式双足）机器人控制固件。该系统利用 FreeRTOS 实时操作系统进行多任务管理，并结合 **LQR（线性二次型调节器）** 与 **VMC（虚拟模型控制）** 等先进控制算法，实现了机器人的动态自平衡、行走、转向、深蹲及跳跃等高级动态行为。
 
 ## ✨ 技术亮点
@@ -79,7 +101,7 @@
 
 8. 驱动板装上电机后接上串口进行校准，发送erase擦除重新校准，setid:设置id，vot:发送电压，需供电
 
-   ![](.\image\ed0f7a1a697990ae4f588208c2df5839.jpg)
+   ![](ed0f7a1a697990ae4f588208c2df5839.jpg)
 
    
 
@@ -93,20 +115,20 @@
 
 4. can通信是否正常，正常后驱动板只有一个led常亮
 
-   ![](.\image\93ac4a5f4e9bca839d19092b8661a87e.jpg)
+   ![](93ac4a5f4e9bca839d19092b8661a87e.jpg)
 
 ### 1.2 IMU校准
 
-![image-20260427215930728](.\image\image-20260427215930728.png)
+![image-20260427215930728](image-20260427215930728.png)
 
-​	给esp32主板放平后使用typec供电，点击Monitor监视，按复位按键会打印出偏移数据，填进去即可
+	给esp32主板放平后使用typec供电，点击Monitor监视，按复位按键会打印出偏移数据，填进去即可
 
 ### 1.3机器人安装事项
 
-![](E:\QQ\download\ESP32_WROOM_32\image\75a18029a7384672413d8b65ff5028ba.jpg)
+![](75a18029a7384672413d8b65ff5028ba.jpg)
 
 1. ID不可重复，将注释掉的地方取消注释将上一行注释，观察dir正负
-2. ![](.\image\image-20260427220920682.png)
+2. ![](image-20260427220920682.png)
 3. 烧录后先确定dir为1或者-1，具体方法为观察串口输入的角度值，向正方向的角度旋转每个关节，如果输出对应关节的角度变大，则dir为1，反之dir为-1；先在代码中把刚刚确定的dir填写进去再编译烧录一次；
 4. 确定好dir以后将4个关节都旋转到朝车头水平方向，记录下输出的角度，如果dir为1，则offsetAngle值则为输出角度，如果dir为-1，则offsetAngle为输出角度的负值；（如果车辆已经组装，部分关节无法旋转到水平超前的角度，则可以前关节朝前，后关节朝后，观察数据后关节的角度减去3.141得出的数据就是后关节的偏移角度，再根据dir的正负进行记录）
 5. 通过Motor_SendTaslk直接发送电压来观察CAN是否正常
@@ -114,7 +136,7 @@
 
 ### 2.1调试髋部
 
-![](.\image\image-20260427221525566.png)
+![](image-20260427221525566.png)
 
 1. 将所选取消注释，其他任务注释，取消main函数里的控制代码注释，VMC_TestTask,中有左右单腿，和双腿测试，逐个测试
 2. 修改leglengthPID使腿部具有一定抗干扰能力，增大P响应增快
@@ -131,6 +153,9 @@ float kRatio[2][6] = {
 		{1.0f,1.0f,	1.2f,1.2f,1.0f,1.0f}	//lqrOutTp		髋关节
 		};			
 ```
+保持小范围内移动即可
+
+[![演示视频](https://github.com/user-attachments/assets/b8e1a997-dfb4-42a7-b6f0-01b51ff9c36e)](https://github.com/user-attachments/assets/b8e1a997-dfb4-42a7-b6f0-01b51ff9c36e)
 
 ### 2.3保护措施
 
@@ -150,7 +175,7 @@ bool check_Fallground(){
 
 ### 3.1单腿起立
 
-![](.\image\1d57a3a312c8cbb8ff105d135cce26ec.jpg)
+![](1d57a3a312c8cbb8ff105d135cce26ec.jpg)
 
 1. 腿部分开算PID
 
@@ -165,13 +190,15 @@ bool check_Fallground(){
 
 同单腿，一起给值就好
 
+[![演示视频](https://github.com/user-attachments/assets/928c907b-2759-4c30-b4f5-79027ee33e45)](https://github.com/user-attachments/assets/928c907b-2759-4c30-b4f5-79027ee33e45)
 ### 3.3跳跃
+
 
 参考达妙状态机，分为3个状态，下压，弹起，收缩转常态
 
 跳跃时可以给目标值大一点，保证力足够
 
-记得锁定yaw目标+清零yawPID输出![]()
+记得锁定yaw目标+清零yawPID输出
 
 ```c
 target.yawAngle = imuData.yaw;
@@ -179,9 +206,56 @@ yawPID.output = 0;
 target.position = stateVar.x;
 target.speed = 0.0f;
 ```
-
+效果一般，力不太够
+[![演示视频](https://github.com/user-attachments/assets/429bd7b9-4312-4c28-aed4-620284ee8f30)](https://github.com/user-attachments/assets/429bd7b9-4312-4c28-aed4-620284ee8f30)
 ### 4.1html蓝牙/键鼠控制
 
-![](.\image\a1.png)
+![](a1.png)
 
 也可以使用其他遥控器控制，这里方便看状态
+
+## 系统知识总结
+
+### 1.VMC[(16 条消息) 五连杆运动学解算与VMC - 知乎](https://zhuanlan.zhihu.com/p/613007726)
+
+#### 1.1什么是VMC
+
+VMC指的是virtual model control,是一种虚拟模型控制，用来把“想要的运动”
+
+转成每个关节该输出的力矩。
+
+**不直接控制单个关节角度，而是虚拟构建弹簧阻尼组成整体模型，根据姿态高度速度，计算出维持稳定所需要的目标合力，通过雅可比矩阵映射，把整体力分配各给腿部关节，驱动轮执行。**
+
+#### 1.2.五连杆运动学解算
+
+已知髋关节A,E两个电机角度以及大小腿长度，可以推算出五连杆机构末端C的位置,取A,E中点位置即可计算出虚拟的L0，theta0.(具体计算过程看玺佬推导)
+
+设X=[L0,theta0]^T, q=[theta1,theta4]^T,根据x=f(q)，并进行全微分可得出雅可比矩阵J等于
+$$
+(\begin{bmatrix} \delta L_0 \\ \delta \phi_0 \end{bmatrix} = \begin{bmatrix} \dfrac{\partial f_1}{\partial \phi_1} & \dfrac{\partial f_1}{\partial \phi_4} \\ \dfrac{\partial f_2}{\partial \phi_1} & \dfrac{\partial f_2}{\partial \phi_4} \end{bmatrix} \begin{bmatrix} \delta \phi_1 \\ \delta \phi_4 \end{bmatrix})(\delta \boldsymbol{x} = \boldsymbol{J} \delta \boldsymbol{q})
+$$
+根据虚功原理即系统总虚功为0，关节力矩做的虚功＋末端力做的虚功=0，
+$$
+
+\boldsymbol{T}^\mathrm{T} \delta \boldsymbol{q} + (-\boldsymbol{F})^\mathrm{T} \delta \boldsymbol{x} = 0
+$$
+
+$$
+将 \delta \boldsymbol{x} = \boldsymbol{J} \delta \boldsymbol{q}$
+代入上式： \\
+\boldsymbol{T}^\mathrm{T} \delta \boldsymbol{q} - \boldsymbol{F}^\mathrm{T} \boldsymbol{J} \delta \boldsymbol{q} = 0\\  
+\left( \boldsymbol{T}^\mathrm{T} - \boldsymbol{F}^\mathrm{T} \boldsymbol{J} \right) \delta \boldsymbol{q} = 0  
+\\由于 \delta \boldsymbol{q} 为任意虚位移\\因此：  \boldsymbol{T}^\mathrm{T} = \boldsymbol{F}^\mathrm{T} \boldsymbol{J}  两边转置得： \boldsymbol{T} = \boldsymbol{J}^\mathrm{T} \boldsymbol{F}
+$$
+
+
+但是计算量过大，便用以下方法
+
+**雅可比矩阵 实际描述的是两坐标微分的线性映射关系，因此我们可以通过计算速度映射关系来得到雅可比矩阵**减少计算量。
+
+对xb，xd关系式求导，求出theta2的导数，再将其代入xc，yc导数的关系式中化简即可得到所需的关系式
+
+
+
+
+
