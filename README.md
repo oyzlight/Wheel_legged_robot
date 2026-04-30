@@ -237,19 +237,18 @@ VMC指的是virtual model control,是一种虚拟模型控制，用来把“想�
 设X=[L0,theta0]^T, q=[theta1,theta4]^T,根据x=f(q)，并进行全微分可得出雅可比矩阵J等于
 $$
 (\begin{bmatrix} \delta L_0 \\ \delta \phi_0 \end{bmatrix} = \begin{bmatrix} \dfrac{\partial f_1}{\partial \phi_1} & \dfrac{\partial f_1}{\partial \phi_4} \\ \dfrac{\partial f_2}{\partial \phi_1} & \dfrac{\partial f_2}{\partial \phi_4} \end{bmatrix} \begin{bmatrix} \delta \phi_1 \\ \delta \phi_4 \end{bmatrix})(\delta \boldsymbol{x} = \boldsymbol{J} \delta \boldsymbol{q})
-$$
+\\
 根据虚功原理即系统总虚功为0，关节力矩做的虚功＋末端力做的虚功=0，
-$$
+\\
 \boldsymbol{T}^\mathrm{T} \delta \boldsymbol{q} + (-\boldsymbol{F})^\mathrm{T} \delta \boldsymbol{x} = 0
-$$
 
-$$
+\\
 将 \delta \boldsymbol{x} = \boldsymbol{J} \delta \boldsymbol{q}
 代入上式： 
 \\
 \boldsymbol{T}^\mathrm{T} \delta \boldsymbol{q} - \boldsymbol{F}^\mathrm{T} \boldsymbol{J} \delta \boldsymbol{q} = 0\\  
 \left( \boldsymbol{T}^\mathrm{T} - \boldsymbol{F}^\mathrm{T} \boldsymbol{J} \right) \delta \boldsymbol{q} = 0  
-\\由于 delta \boldsymbol{q} 为任意虚位移\\因此：  boldsymbol{T}^\mathrm{T} = \boldsymbol{F}^\mathrm{T} \boldsymbol{J}  两边转置得： \boldsymbol{T} = \boldsymbol{J}^\mathrm{T} \boldsymbol{F}
+\由于 delta \boldsymbol{q} 为任意虚位移\因此：  boldsymbol{T}^\mathrm{T} = \boldsymbol{F}^\mathrm{T} \boldsymbol{J}  两边转置得： \boldsymbol{T} = \boldsymbol{J}^\mathrm{T} \boldsymbol{F}
 $$
 
 
