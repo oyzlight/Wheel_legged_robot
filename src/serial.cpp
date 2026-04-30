@@ -32,7 +32,7 @@ void Serial_Task(void *pvParameters)
 		//Serial.printf("%.3f\n",leftWheel.angle);	//测量2805反电动势
 		//Serial.printf("%f\n",leftJoint[0].speed);	//测量4310反电动势
 		// Serial.printf("%f,%f,%f\n",imuData.pitchSpd,imuData.rollSpd,imuData.yawSpd); 	//查看角速度 确保IMU方向
-		// Serial.printf("pry:%.3f,%.3f,%.3f\r\n",imuData.pitch*180.0f/3.14159f,imuData.roll*180.0f/3.14159f,imuData.yaw*180.0f/3.14159f); 	//查看角速度 确保IMU方向
+		Serial.printf("pry:%.3f,%.3f,%.3f\r\n",imuData.pitch*180.0f/3.14159f,imuData.roll*180.0f/3.14159f,imuData.yaw*180.0f/3.14159f); 	//查看角速度 确保IMU方向
 		// 观察当前计算出的腿长是否卡在 0.05m，以及输出力矩是否达到了上限
 	// 	Serial.printf("腿长: L=%.3f->%.3f, PID_outer=%.3f, PID_inner=%.3f\n",
     // leftLegPos.length, target.leftlegLength, 

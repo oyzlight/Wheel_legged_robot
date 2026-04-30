@@ -90,8 +90,8 @@ class MyCallbacks : public BLECharacteristicCallbacks
                     break;
                     
                 case 0x06:  // 起立
-                    target.leftlegLength=0.13f;
-                    target.rightlegLength=0.13f;
+                    target.leftlegLength=0.14f;
+                    target.rightlegLength=0.14f;
                
                     Serial.println("Leg Up");
                     break;

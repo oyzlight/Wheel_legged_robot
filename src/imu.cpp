@@ -6,7 +6,7 @@ MPU6050 mpu;
 IMUData imuData;
 
 // YAW漂移补偿（每秒减去的角度，单位：度）
-#define YAW_DRIFT_PER_SEC 0.01f  // 每秒减去0.2度
+#define YAW_DRIFT_PER_SEC 0.005f  // 每秒减去0.2度
 float yawDriftCompensation = 0.0f;
 
 //陀螺仪数据获取任务
@@ -50,7 +50,7 @@ void IMU_Task(void *arg)
 			lastYaw = yaw;
 			// 累加漂移补偿（每5ms一次，每秒累加YAW_DRIFT_PER_SEC度）
 			yawDriftCompensation += YAW_DRIFT_PER_SEC * 5.0f / 1000.0f * M_PI / 180.0f;
-			imuData.yaw = yaw + yawRound * 2 * M_PI - yawDriftCompensation; //imuData.yaw为累计转角
+			imuData.yaw = yaw + yawRound * 2 * M_PI ; //imuData.yaw为累计转角
 
 			//获取陀螺仪Z轴加速度
 			VectorInt16 rawAccel;

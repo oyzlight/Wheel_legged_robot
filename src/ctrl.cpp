@@ -304,8 +304,8 @@ void CtrlBasic_Task(void *arg)
 	//                     theta dTheta  x,   dx,   phi, dPhi
 	//0.5f,  0.0f,  0.8f, 0.5f, 0.75f, 0.6f 轮子  {0.4f,  0.1f,  0.8f, 0.5f, 0.75f, 0.6f}加积分
 	float kRatio[2][6] = {
-		{0.4f,  0.1f,  0.8f, 0.5f, 0.75f, 0.6f},	//lqrOutT		轮子
-		{1.0f,1.0f,	1.2f,1.2f,	0.0f,0.0f}	//lqrOutTp		髋关节
+		{0.4f,  0.1f,  1.0f, 0.7f, 0.75f, 0.75f},	//lqrOutT		轮子
+		{1.0f,1.0f,	0.8f,0.5f,	0.0f,0.0f}	//lqrOutTp		髋关节
 		};			
 	float lqrTRatio = 1.0f,				    //轮子
 		  lqrTpRatio = 1.0f;					//髋关节
@@ -322,7 +322,7 @@ void CtrlBasic_Task(void *arg)
 	
 	target.speed = 0.0f;
 	target.position = (leftWheel.angle + rightWheel.angle) / 2 * wheelRadius;
-	Serial.printf("%.3f\n",target.position);	
+	// Serial.printf("%.3f\n",target.position);	
 
 	static float integral_x_error = 0;
 	float dt = 0.004f;  // 控制周期4ms
@@ -555,7 +555,7 @@ void CtrlBasic_Task(void *arg)
 			Motor_SetTorque(&rightJoint[1], -rightJointTorque[1]);
 		
 	
-		Serial.printf("l1:%.3f,l2:%.3f,r1:%.3f,r2:%.3f\r\n",leftJointTorque[0],leftJointTorque[1],rightJointTorque[0],rightJointTorque[1]);
+		// Serial.printf("l1:%.3f,l2:%.3f,r1:%.3f,r2:%.3f\r\n",leftJointTorque[0],leftJointTorque[1],rightJointTorque[0],rightJointTorque[1]);
 		vTaskDelayUntil(&xLastWakeTime, 4); //4ms控制周期
 	}
 	
@@ -568,7 +568,7 @@ void Ctrl_Init(void)
 	PID_SetErrLpfRatio(&rollPID.inner, 0.1f);
 
 	PID_Init(&yawPID.inner, 0.01, 0.001, 0.03, 0.2, 0.5);
-	PID_Init(&yawPID.outer, 7, 0, 0.0, 0, 2);
+	PID_Init(&yawPID.outer, 7, 0, 6, 0, 2);
 
 	PID_Init(&legLengthPID.inner, 10.0f, 1, 30.0f, 2.0f, 10.0f);
 	PID_Init(&legLengthPID.outer, 5.0f, 0.0f, 0.0f, 0.0f, 2.0f);
@@ -576,10 +576,10 @@ void Ctrl_Init(void)
 
 	// 在 Ctrl_Init 函数中添加：
 	PID_Init(&leftlegLengthPID.inner, 10.0f, 1, 30.0f, 2.0f, 10.0f); // 起立需要极大的刚度
-	PID_Init(&leftlegLengthPID.outer, 8.0f, 0.0f, 6.0f, 0.0f, 3.0f);
+	PID_Init(&leftlegLengthPID.outer, 6.0f, 0.0f, 0.0f, 0.0f, 3.0f);
 
 	PID_Init(&rightlegLengthPID.inner,10.0f, 1, 30.0f, 2.0f, 10.0f);
-	PID_Init(&rightlegLengthPID.outer, 8.0f, 0.0f, 6.0f, 0.0f, 3.0f);
+	PID_Init(&rightlegLengthPID.outer, 6.0f, 0.0f, 0.0f, 0.0f, 3.0f);
 
 	PID_Init(&legAnglePID.inner, 0.04, 0, 0, 0, 1);
 	PID_Init(&legAnglePID.outer, 10, 0, 0, 0, 20);
@@ -590,6 +590,6 @@ void Ctrl_Init(void)
 	// xTaskCreate(Ctrl_StandupPrepareTask, "Ctrl_StandupPrepareTask", 4096, NULL, 1, NULL);
 	//xTaskCreate(vSinGeneratorTask, "vSinGeneratorTask", 4096, NULL, 1, NULL);
 	// xTaskCreate(VMC_TestTask, "VMC_TestTask", 4096, NULL, 1, NULL);//测试
-	xTaskCreate(CtrlBasic_Task, "CtrlBasic_Task", 4096, NULL, 1, NULL);//没有离地检测器
+	xTaskCreate(CtrlBasic_Task, "CtrlBasic_Task", 4096, NULL, 1, NULL);//主任务
 
 }
