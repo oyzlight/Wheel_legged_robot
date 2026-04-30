@@ -204,7 +204,7 @@ target.position = stateVar.x;
 target.speed = 0.0f;
 ```
 效果一般，力不太够
-[![]https://github.com/user-attachments/assets/429bd7b9-4312-4c28-aed4-620284ee8f30](https://github.com/user-attachments/assets/429bd7b9-4312-4c28-aed4-620284ee8f30)
+[![](https://github.com/user-attachments/assets/429bd7b9-4312-4c28-aed4-620284ee8f30)](https://github.com/user-attachments/assets/429bd7b9-4312-4c28-aed4-620284ee8f30)
 ### 4.1html蓝牙/键鼠控制
 
 ![](a1.png)
