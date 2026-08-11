@@ -255,6 +255,8 @@ u = K * x
 
 其中 `x` 是状态量，`K` 是反馈矩阵，`u` 是输出控制量。
 
+![LQR状态反馈小黑示意](assets/wheel-legged-lqr-illustrations/01-lqr-state-feedback.png)
+
 #### 2.2 本项目里的状态量
 
 在 `src/ctrl.cpp` 中，LQR 使用 6 个状态量：
@@ -370,6 +372,8 @@ LQR 计算 lqrOutT / lqrOutTp
 轮电机直接输出 lqrOutT
 髋膝关节经 VMC 把 lqrOutTp 映射为关节力矩
 ```
+
+![LQR与VMC接力示意](assets/wheel-legged-lqr-illustrations/02-lqr-vmc-handoff.png)
 
 #### 2.6 常见问题
 
