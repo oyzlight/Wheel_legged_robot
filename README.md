@@ -239,6 +239,149 @@ VMC指的是virtual model control,是一种虚拟模型控制，用来把“想�
 
 对xb，xd关系式求导，求出theta2的导数，再将其代入xc，yc导数的关系式中化简即可得到所需的关系式
 
+### 2.LQR（线性二次型调节器）
+
+#### 2.1 什么是LQR
+
+LQR 是 Linear Quadratic Regulator，中文一般叫线性二次型调节器。它解决的问题可以理解为：
+
+在机器人偏离平衡点时，根据当前姿态、速度、位置等状态量，计算一组“让系统尽快回到目标状态，同时不要输出过猛”的最优控制量。
+
+对轮足机器人来说，可以把整车近似成一个“轮子上的倒立摆 + 可变腿长机构”。车身一旦前倾，轮子需要往前追；车身后仰，轮子需要往后退。LQR 做的就是把这种修正关系写成状态反馈：
+
+```c
+u = K * x
+```
+
+其中 `x` 是状态量，`K` 是反馈矩阵，`u` 是输出控制量。
+
+![LQR状态反馈小黑示意](assets/wheel-legged-lqr-illustrations/01-lqr-state-feedback.png)
+
+#### 2.2 本项目里的状态量
+
+在 `src/ctrl.cpp` 中，LQR 使用 6 个状态量：
+
+| 状态量 | 代码变量 | 含义 |
+| --- | --- | --- |
+| `theta` | `stateVar.theta` | 虚拟腿相对车身的角度 |
+| `dTheta` | `stateVar.dTheta` | 虚拟腿角速度 |
+| `x` | `stateVar.x` | 轮子累计位移 |
+| `dx` | `stateVar.dx` | 轮子线速度 |
+| `phi` | `stateVar.phi` | 车身 pitch 角 |
+| `dPhi` | `stateVar.dPhi` | 车身 pitch 角速度 |
+
+代码中实际组包如下：
+
+```c
+float x[6] = {
+    stateVar.theta,
+    stateVar.dTheta,
+    stateVar.x,
+    stateVar.dx,
+    stateVar.phi,
+    stateVar.dPhi
+};
+
+x[2] -= target.position;
+x[3] -= target.speed;
+```
+
+也就是说，`theta / dTheta / phi / dPhi` 默认目标是 0，表示腿和车身回到平衡姿态；`x / dx` 会减去目标位置和目标速度，用来实现前进、后退和定点保持。
+
+#### 2.3 LQR输出了什么
+
+本项目的 `lqr_k(legLength, kRes)` 会根据当前腿长 `legLength` 计算反馈矩阵。腿越高，系统重心越高，平衡难度和所需控制量都会变化，所以 K 矩阵不能只用固定一组。
+
+代码把 `kRes` 转成 2 行 6 列的矩阵：
+
+```c
+float kRes[12] = {0}, k[2][6] = {0};
+lqr_k(legLength, kRes);
+
+for (int i = 0; i < 6; i++)
+{
+    for (int j = 0; j < 2; j++)
+        k[j][i] = kRes[i * 2 + j] * kRatio[j][i];
+}
+```
+
+这里的两路输出分别是：
+
+| 输出量 | 作用对象 | 作用 |
+| --- | --- | --- |
+| `lqrOutT` | 左右轮电机 | 让轮子前后运动，追住车身重心 |
+| `lqrOutTp` | 髋部/腿部虚拟力矩 | 调整虚拟腿角度，辅助车身姿态稳定 |
+
+计算公式对应：
+
+```c
+float lqrOutT =
+    k[0][0] * x[0] + k[0][1] * x[1] +
+    k[0][2] * x[2] + k[0][3] * x[3] +
+    k[0][4] * x[4] + k[0][5] * x[5];
+
+float lqrOutTp =
+    k[1][0] * x[0] + k[1][1] * x[1] +
+    k[1][2] * x[2] + k[1][3] * x[3] +
+    k[1][4] * x[4] + k[1][5] * x[5];
+```
+
+轮子部分直接下发到左右轮，并叠加 yaw 控制：
+
+```c
+Motor_SetTorque(&leftWheel, -lqrOutT * lqrTRatio - yawPID.output);
+Motor_SetTorque(&rightWheel, -lqrOutT * lqrTRatio + yawPID.output);
+```
+
+髋部部分不会直接等于某一个关节电机力矩，而是作为虚拟腿角力矩 `Tp`，再通过 VMC / 雅可比矩阵换算成左右腿各关节输出。
+
+#### 2.4 `kRatio`怎么调
+
+`lqr_k()` 生成的是理论反馈矩阵，实际机器人会受到电机方向、机械装配、摩擦、电池电压、腿长误差等影响，所以代码里又加了一层 `kRatio`：
+
+```c
+float kRatio[2][6] = {
+    {0.4f, 0.1f, 1.0f, 0.7f, 0.75f, 0.75f}, // lqrOutT  轮子
+    {1.0f, 1.0f, 0.8f, 0.5f, 0.0f, 0.0f}    // lqrOutTp 髋关节
+};
+```
+
+调参建议：
+
+1. 先确认 IMU 方向和轮电机方向。车身前倾时，轮子应该向前追；如果反了，优先改方向，不要靠调小增益掩盖。
+2. 先固定腿长调平衡，再调变腿长、下蹲、起跳。腿长变化会改变 `lqr_k(legLength)` 的输出。
+3. `phi / dPhi` 太小会扶不住车身，太大容易抖动；`x / dx` 太大容易前后冲。
+4. `theta / dTheta` 影响虚拟腿摆角参与程度，髋关节力矩过猛时优先降低第二行对应比例。
+5. 起跳或腾空阶段可以临时降低 `lqrTRatio / lqrTpRatio`，避免空中轮子和髋部乱补偿；落地后再恢复。
+
+#### 2.5 LQR和VMC的关系
+
+LQR 负责算“整车应该怎么稳住”：轮子应该给多少前后力矩，虚拟腿应该给多少姿态力矩。
+
+VMC 负责算“这些虚拟力矩具体分给哪个关节”：把腿长方向的力 `F` 和腿角方向的力矩 `Tp`，通过五连杆雅可比矩阵映射到左右髋/膝关节电机。
+
+所以整体链路可以理解为：
+
+```text
+IMU + 轮速 + 腿部编码器
+        ↓
+6状态量 theta / dTheta / x / dx / phi / dPhi
+        ↓
+LQR 计算 lqrOutT / lqrOutTp
+        ↓
+轮电机直接输出 lqrOutT
+髋膝关节经 VMC 把 lqrOutTp 映射为关节力矩
+```
+
+![LQR与VMC接力示意](assets/wheel-legged-lqr-illustrations/02-lqr-vmc-handoff.png)
+
+#### 2.6 常见问题
+
+- **一上电就飞车：** 优先检查 IMU pitch 正负、轮电机方向、`target.position = stateVar.x` 是否及时同步。
+- **能站但来回大幅摆动：** 降低 `phi / dPhi` 或 `x / dx` 对轮子输出的比例，确认控制周期稳定在 4ms。
+- **腿部抖动或互相打架：** 降低 `lqrOutTp` 对应的 `kRatio`，再检查左右腿角度、关节方向和 VMC 映射正负。
+- **起跳后轮子乱转：** 腾空阶段切断或降低 LQR 输出，落地检测后再恢复。
+
 
 
 
